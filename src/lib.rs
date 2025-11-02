@@ -48,7 +48,10 @@ pub fn fetch_latest_price(ticker: &str) -> Result<f64, Box<dyn Error + Send + Sy
     let body = String::from_utf8(bytes.to_vec())
         .map_err(|e| format!("Failed to decode response: {}", e))?;
 
-    let pattern = format!(r#"id=aq_{}_c4[^>]+>([0-9]+\.?[0-9]*)</span>"#, ticker.to_lowercase());
+    let pattern = format!(
+        r#"id=aq_{}_c4[^>]+>([0-9]+\.?[0-9]*)</span>"#,
+        ticker.to_lowercase()
+    );
 
     let re_post = Regex::new(&pattern)?;
 
@@ -58,7 +61,6 @@ pub fn fetch_latest_price(ticker: &str) -> Result<f64, Box<dyn Error + Send + Sy
             return Ok(price);
         }
     }
-
 
     Err("Could not find price in response".into())
 }

@@ -1,10 +1,10 @@
-use xbar_stocks::fetch_latest_price;
 use rayon::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::env;
 use std::fs::File;
 use std::path::PathBuf;
+use xbar_stocks::fetch_latest_price;
 
 #[derive(Debug, Clone, Deserialize)]
 struct Position {
@@ -70,12 +70,10 @@ fn consolidate_positions(positions: Vec<Position>) -> Vec<Position> {
     // Calculate weighted average buy price for each ticker
     consolidated
         .into_iter()
-        .map(|(ticker, (total_cost, total_shares))| {
-            Position {
-                ticker,
-                buy_price: total_cost / total_shares,
-                shares: total_shares,
-            }
+        .map(|(ticker, (total_cost, total_shares))| Position {
+            ticker,
+            buy_price: total_cost / total_shares,
+            shares: total_shares,
         })
         .collect()
 }
@@ -90,7 +88,12 @@ fn main() {
         Ok(positions) => positions,
         Err(e) => {
             eprintln!("Error loading positions from {}: {}", csv_path_str, e);
-            eprintln!("Usage: {} [path/to/data.csv]", env::args().next().unwrap_or_else(|| "xbar-stocks".to_string()));
+            eprintln!(
+                "Usage: {} [path/to/data.csv]",
+                env::args()
+                    .next()
+                    .unwrap_or_else(|| "xbar-stocks".to_string())
+            );
             eprintln!("Default location: ~/.stocks/data.csv");
             std::process::exit(1);
         }
@@ -130,7 +133,8 @@ fn main() {
         match result {
             Ok(current_price) => {
                 let current_value = current_price * position.shares;
-                let change_percent = ((current_price - position.buy_price) / position.buy_price) * 100.0;
+                let change_percent =
+                    ((current_price - position.buy_price) / position.buy_price) * 100.0;
                 let profit_loss = current_value - investment;
 
                 total_current_value += current_value;
@@ -148,9 +152,9 @@ fn main() {
                 position_data.push((
                     position.ticker.clone(),
                     position.buy_price,
-                    0.0, // placeholder
+                    0.0,               // placeholder
                     f64::NEG_INFINITY, // sort errors to bottom
-                    0.0, // placeholder
+                    0.0,               // placeholder
                     Some(e.to_string()),
                 ));
             }
@@ -167,29 +171,31 @@ fn main() {
             position_lines.push(format!("{}: Error - {} | color=darkred", ticker, err_msg));
         } else {
             let sign = if profit_loss >= 0.0 { "+" } else { "-" };
-            let color = if profit_loss >= 0.0 { "green" } else { "darkred" };
+            let color = if profit_loss >= 0.0 {
+                "green"
+            } else {
+                "darkred"
+            };
 
             // Format with padding for alignment
             let profit_str = format!("{}${}", sign, format_with_separator(profit_loss));
-            let percent_str = format!("({}{:.2}%)",
+            let percent_str = format!(
+                "({}{:.2}%)",
                 if change_percent >= 0.0 { "+" } else { "" },
-                change_percent);
+                change_percent
+            );
 
             position_lines.push(format!(
                 "{:<10} ${:.2} @ ${:.2} {:>11} {:>10} | color={}",
-                ticker,
-                buy_price,
-                current_price,
-                profit_str,
-                percent_str,
-                color
+                ticker, buy_price, current_price, profit_str, percent_str, color
             ));
         }
     }
 
     // Display in xbar format
     let total_profit_loss = total_current_value - total_investment;
-    let total_change_percent = ((total_current_value - total_investment) / total_investment) * 100.0;
+    let total_change_percent =
+        ((total_current_value - total_investment) / total_investment) * 100.0;
 
     // First line: appears in menu bar
     println!(
@@ -204,8 +210,14 @@ fn main() {
     println!("---");
     //
     // // Portfolio summary
-    println!("Investment: ${} | color=white", format_with_separator(total_investment));
-    println!("Current: ${} | color=white", format_with_separator(total_current_value));
+    println!(
+        "Investment: ${} | color=white",
+        format_with_separator(total_investment)
+    );
+    println!(
+        "Current: ${} | color=white",
+        format_with_separator(total_current_value)
+    );
     println!("---");
     //
     // Individual positions
