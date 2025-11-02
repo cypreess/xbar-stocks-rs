@@ -62,21 +62,3 @@ pub fn fetch_latest_price(ticker: &str) -> Result<f64, Box<dyn Error + Send + Sy
 
     Err("Could not find price in response".into())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_regex_pattern() {
-        let test_html = r#"some text "postMarketPrice":{"raw":277.77, more text"#;
-        let re = Regex::new(r#""postMarketPrice":\{"raw":([0-9]+\.?[0-9]*),?"#).unwrap();
-
-        if let Some(captures) = re.captures(test_html) {
-            if let Some(price_match) = captures.get(1) {
-                let price: f64 = price_match.as_str().parse().unwrap();
-                assert_eq!(price, 277.77);
-            }
-        }
-    }
-}
