@@ -1,8 +1,8 @@
 # Configuration
-binary_name := "stock-checker-rs"
+binary_name := "xbar-stocks"
 release_binary := "target/release/" + binary_name
 xbar_plugins_dir := env_var('HOME') + "/Library/Application Support/xbar/plugins"
-xbar_plugin_name := "stock-checker.5m.o"
+xbar_plugin_name := "xbar-stocks.5m.o"
 
 # Default recipe to display help
 default:

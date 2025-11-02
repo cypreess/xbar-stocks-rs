@@ -1,4 +1,4 @@
-use stock_checker_rs::fetch_latest_price;
+use xbar_stocks::fetch_latest_price;
 use rayon::prelude::*;
 use serde::Deserialize;
 use std::collections::HashMap;
@@ -90,7 +90,7 @@ fn main() {
         Ok(positions) => positions,
         Err(e) => {
             eprintln!("Error loading positions from {}: {}", csv_path_str, e);
-            eprintln!("Usage: {} [path/to/data.csv]", env::args().next().unwrap_or_else(|| "stock-checker-rs".to_string()));
+            eprintln!("Usage: {} [path/to/data.csv]", env::args().next().unwrap_or_else(|| "xbar-stocks".to_string()));
             eprintln!("Default location: ~/.stocks/data.csv");
             std::process::exit(1);
         }

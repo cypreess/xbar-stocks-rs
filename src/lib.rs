@@ -18,7 +18,7 @@ use std::time::Duration;
 /// # Example
 ///
 /// ```no_run
-/// use stock_checker_rs::fetch_latest_price;
+/// use xbar_stocks::fetch_latest_price;
 ///
 /// let price = fetch_latest_price("AAPL").unwrap();
 /// println!("Price: {}", price);
